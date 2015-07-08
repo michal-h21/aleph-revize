@@ -96,18 +96,19 @@ local i = os.clock()
 function addZaznam(aleph)
 	local v = aleph or {}
 	local ck = v[2]
-	local nazev = unicode.utf8.sub(v[4],2,22)
+	local nazev = v[4] --unicode.utf8.sub(v[4],2,22)
 	local signatura = v[3]
 	local lokace = v[7]
 	local status = v[8]
 	local chyba = v[9]
+  local sig2 = v[10]
 	local boxy = p[ck] or {{box = "Nenačteno"}}
 	local t = {}
 	for _,p in pairs(boxy) do
 		table.insert(t,p.koje)
 	end
 	boxy = table.concat(t,"; ")
-	return {ck, signatura, boxy, nazev, lokace, status, chyba}
+	return {ck, signatura, boxy, sig2, nazev, lokace, status, chyba}
 end
 
 function rev_pos(filename)
@@ -187,7 +188,7 @@ function split_sg(sig,prefix)
 	return sig:match('"('..prefix..')([0-9]+)/?([0-9%.%-a%,P]*)([^0-9]*)"')
 end
 p = rev_parse(filename)
-local hlavicka = {"Čárový kód", "Signatura", "Box", "Název", "Lokace", "Status", "Chyba"}
+local hlavicka = {"Čárový kód", "Signatura", "Box", "Sig 2", "Název", "Lokace", "Status", "Chyba"}
 chybkody = {}
 chybkody["CH-1"] = "ČK není v nasnímaných ČK dané revize"
 chybkody["CH-2"] = "ČK je v nasnímaných ČK dané revize a současně je vypůjčen"
@@ -246,7 +247,7 @@ elseif args.command == 'chyby' then
 	local t ={}
 	local k=  {}
   for _,v in pairs(j) do
-		if v[9] ~='OK!' and v[7] ~= 'Rett-studovna' then
+		if v[9] ~='OK!' then -- and v[7] == 'Rett-studovna' then
 			--local s = unicode.utf8.sub(v[4],1,9)
 			--local p = {v[2],v[3],s,v[8],v[9]}
 			local chyby = {}
