@@ -246,7 +246,7 @@ elseif args.command == 'chyby' then
 	local t ={}
 	local k=  {}
   for _,v in pairs(j) do
-		if v[9] ~='"OK!"' and v[7] ~= '"Rett-studovna"' then
+		if v[9] ~='OK!' and v[7] ~= 'Rett-studovna' then
 			--local s = unicode.utf8.sub(v[4],1,9)
 			--local p = {v[2],v[3],s,v[8],v[9]}
 			local chyby = {}
