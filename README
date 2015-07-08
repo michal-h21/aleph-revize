@@ -1,0 +1,96 @@
+Revizní skripty
+===============
+
+Postup při revizi:
+******************
+
+Soubory s čárovými kódy:
+------------------------
+
+1. Vytvoří se adresář pro každou kontrolovanou signaturu nebo sbírku
+2. Soubory s načtenými čárovými kódy se umístí do podadresářů
+3. Porovnají se soubory KOPIE1 a KOPIE2 s ORIGINAL pomocí diff
+4. Zdrojové soubory se sloučí do jednoho souboru pomocí 
+
+   cat pc1/ORIGINAL > slouceny.txt
+   cat pc2/ORIGINAL >> slouceny.txt
+
+5. Překonvertovat je to utf-8 
+   (nutné jen v případě, že 2. signatury obsahují diakritiku)
+
+   iconv -f cp852 -t utf-8 slouceny.txt > revize-jmenosig.txt
+
+6. Vytvořit soubor pro aleph 'revize.xml'
+   Zkopíruje se sloučený sroubor, odstraní se 2. signatury pomocí 
+   regulárních výrazů, přidají se tagy <revize> na začátek a konec souboru
+7. Provede se revize v Alephu, není třeba dávat tisk, budeme používat 
+   výsledné xml
+
+XML soubor
+----------
+
+Má pevnou strukturu, na každém řádku je jeden element, s tím, že pořadí je pevně
+dané. Pokud by se změnila, je třeba skript upravit!
+
+Umístí se do adresáře k načteným kódům.
+
+Konfigurační soubor
+-------------------
+
+Do adresáře umístit soubor config.lua v podobě:
+
+config = {
+    chyby = "chyby.csv",
+    kody  = "revize-dt.txt",
+    prefix = "Dt",
+    xml = "pedf_revize_dt",
+    lokace = "Rett-knihovna"
+}
+
+chyby  - výsledky revizního skriptu 'processxml.lua'
+kody   - načtené čárové kódy
+prefix - počáteční písmena u signatur
+xml    - zpracovávaný xml soubor
+lokace - zpracovávaná lokace
+
+Zpracování xml
+--------------
+
+  ./processxml.lua adresar/ > adresar/chyby.csv
+
+Vytvoří soubor chyby.csv ve zpracovávaném adresáři. Jednotlivé položky jsou 
+oddělené tabulátorem.
+
+Je tam záznam pro každou jednotku z revizního xml souboru, s nalezenými chybami
+
+Revizní výstupy
+---------------
+
+Revizní výstupy zpracovává hlavní skript 'revparser.lua'
+
+   ./revparser [parametry] příkaz adresář
+
+Parametry se liší pro jednotlivé příkazy, většina žádné nemá. Existuje jeden 
+univerzální parametr:
+
+  -t - výstup bude v LaTeXu
+
+Příkazy:
+
+   navic     - najde záznamy načtené při revizi, které nejsou v xml souboru z 
+               alephu většinou jsou to špatné kódy nebo jednotky z jiných 
+               lokací nebo signatur. Vypíše i jednotky okolo, aby šly líp 
+               hledat.
+   dupl      - víckrát načtené čárové kódy
+   chyby     - chyby z xml souboru - hlavně nenačtené kódy
+   signatury - signatury které nebyly načtené v řadě - můžou být špatně 
+               založené. Parametr -p se může použít pokud byly načítaní 
+               obráceně. Metoda hledání není přesná, je třeba kontrola v 
+               souboru načtených čk.
+               Je možné zadat pozice od kud kam se má jaká metoda použít:
+               ./revparser.lua -p signatury 1 1330  - byly načítané obráceně
+               ./revparser.lua signatury 1330 2440  - správně načtené
+   kody      - vytiskne seznam jednotek seřazených podle toho, jak byly načtené
+               jejich čárové kódy. Užitečné pro kontroly a dohledávky
+   sig2      - pro studovnu, vytiskne špatně zařazené 2. signatury  
+   
