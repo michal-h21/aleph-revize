@@ -51,7 +51,7 @@ chyby  - výsledky revizního skriptu 'processxml.lua'
 kody   - načtené čárové kódy
 prefix - počáteční písmena u signatur
 xml    - zpracovávaný xml soubor
-lokace - zpracovávaná lokace
+lokace - zpracovávaná lokace. Pokud se zpracovává víc lokací (revize signatury F...), může se použít pole
 
 Zpracování xml
 --------------
