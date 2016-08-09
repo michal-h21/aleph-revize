@@ -109,6 +109,15 @@ local p = 0
 -- CH-4 ČK je vyřazen a současně je vypůjčen"
 -- CH-5 Dokument je z jiné Sbírky"
 -- CH-6 ČK je v nasnimaných ČK dané revize a současně je vyřazen"
+--
+local find_lokace = {}
+if type(config.lokace) == "table" then
+  for _,v in ipairs(config.lokace) do
+    find_lokace[v] = true
+  end
+else
+  find_lokace[config.lokace] = true
+end
 
 
 for k,v in pairs(zaznamy) do
@@ -142,7 +151,7 @@ for k,v in pairs(zaznamy) do
 			add_chyba("CH-4")
 		end
 	end
-	if v.lokace ~= config.lokace then add_chyba("CH-5") end
+	if not find_lokace[v.lokace] then add_chyba("CH-5") end
 end
 
 --print(string.format("Parsing  time: %.2f\n",  y - x))
