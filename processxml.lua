@@ -119,6 +119,7 @@ else
   find_lokace[config.lokace] = true
 end
 
+-- statusy, u 
 
 for k,v in pairs(zaznamy) do
 	local function add_chyba(ch)
@@ -136,6 +137,14 @@ for k,v in pairs(zaznamy) do
 		if v.status == "Vyřazeno" then add_chyba("CH-6") 
 		elseif v.status == "Grantová výp." then add_chyba("CH-7")
 		end
+    -- Hledat vyřazené jen když jsou načtené
+    if v.status == "Vyřazeno" then 
+      if v.pujceno == "N" then
+        add_chyba("CH-3")
+      else
+        add_chyba("CH-4")
+      end
+    end
 	else
 		--print (k,v.ck, v.citace, v.pujceno)
 		--print_zaz(v)
@@ -143,13 +152,6 @@ for k,v in pairs(zaznamy) do
   		add_chyba("CH-1")
 		end
 		--if v.status = ""
-	end
-	if v.status == "Vyřazeno" then 
-		if v.pujceno == "N" then
-			add_chyba("CH-3")
-		else
-			add_chyba("CH-4")
-		end
 	end
 	if not find_lokace[v.lokace] then add_chyba("CH-5") end
 end
