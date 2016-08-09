@@ -119,7 +119,13 @@ else
   find_lokace[config.lokace] = true
 end
 
--- statusy, u 
+-- statusy, u kterých nevadí, že nejsou načtené
+
+local allowed_statuses = {
+  ["Vyřazeno"] = true,
+  ["Ztráta"]   = true,
+  ["Pravděpodobná ztráta"] = true
+}
 
 for k,v in pairs(zaznamy) do
 	local function add_chyba(ch)
@@ -148,7 +154,7 @@ for k,v in pairs(zaznamy) do
 	else
 		--print (k,v.ck, v.citace, v.pujceno)
 		--print_zaz(v)
-		if v.pujceno ~="Y" and v.status ~= "Vyřazeno" then
+		if v.pujceno ~="Y" and not allowed_statuses[v.status ] then
   		add_chyba("CH-1")
 		end
 		--if v.status = ""
