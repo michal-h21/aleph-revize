@@ -185,7 +185,7 @@ function dvoji(codes)
 end
 
 function split_sg(sig,prefix)
-	return sig:match('"('..prefix..')([0-9]+)/?([0-9%.%-a%,P]*)([^0-9]*)"')
+	return sig:match('"('..prefix..')([0-9]+)/?([0-9%.%-a%,P%;% %/]*)([^0-9]*)"')
 end
 p = rev_parse(filename)
 local hlavicka = {"Čárový kód", "Signatura", "Box", "Sig 2", "Název", "Lokace", "Status", "Chyba"}
@@ -335,7 +335,9 @@ elseif args.command == "signatury" then
 		if z then
 		  local sig = z[3]
 		  local pref,num,dil,pis = split_sg(sig,prefix)
+      if not pref or pref == ""  then pref, num = sig:match("\"([A-Za-z]+)([0-9]+)") end
 			if pref~=prefix then
+        print("wtf", pref, sig)
 		    table.insert(chyby,{"Chybná signatura",pos,sig,pref,num,dil,pis})
 			else
 				table.insert(t,{num = num, pos = pos, code = v.code})
@@ -385,6 +387,22 @@ elseif args.command == "signatury" then
 	end
 	tablePrint(ch,{"Zpráva","Pozice","ČK","Signatura","Název"})
 elseif args.command == "sig2" then
+    local lower =  unicode.utf8.lower
+    local gsub = unicode.utf8.gsub
+    local cache = {}
+    local diacritics = {["á"]="a", ["č"] = "c", ["ď"] = "d", ["é"] = "e", ["ě"] = "e", ["í"] = "i", ["ň"] = "n", ["ó"] = "o", ["ř"] = "r", ["š"] = "s", ["ť"] = "t", ["ú"] = "u", ["ů"]= "u", ["ž"] = "z"}
+    local normalize = function(s)
+      if cache[s] then return cache[s] end
+      local x = lower(s)
+      x = x:gsub(" ", "")
+      x = gsub(x,".", function(a)
+        return diacritics[a] or a
+      end)
+      cache[s] = x
+      return x
+    end
+
+      
 		local j= loadTSV(csvfile)
 		local ch = {}
 		for _,z in pairs(j) do 
@@ -399,7 +417,10 @@ elseif args.command == "sig2" then
 						if type(v) == "table" then
    						table.insert(nacteno, v.koje)
 	   					--print(ck,v.koje,s)
-		  				if v.koje == s then
+              local koj = normalize(v.koje)
+              local ns = normalize(s)
+              -- print(koj, ns)
+		  				if koj == ns then
 			  				shoda = true
 				  		end
 						end
@@ -409,7 +430,7 @@ elseif args.command == "sig2" then
           --local sig = z[3]
 					--local nazev = unicode.utf8.sub(z[4],2,22)
 					local i = addZaznam(z)
-					table.insert(i,3,s)
+					-- table.insert(i,3,s)
 					table.insert(ch,i)--{ck,sig,nazev, s, table.concat(nacteno,', ')})
 				end
 		  end
