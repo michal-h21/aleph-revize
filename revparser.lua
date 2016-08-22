@@ -340,7 +340,7 @@ elseif args.command == "signatury" then
         print("wtf", pref, sig)
 		    table.insert(chyby,{"Chybná signatura",pos,sig,pref,num,dil,pis})
 			else
-				table.insert(t,{num = num, pos = pos, code = v.code})
+				table.insert(t,{num = num, pos = pos, code = v.code, koje = v.koje})
 		  end
 		else
 			table.insert(chyby,{"Nemohu najít záznam ke kódu: ",pos,v.code})
@@ -359,32 +359,50 @@ elseif args.command == "signatury" then
 					return {"Nemůžu najít záznam",v.code,v.pos}
 				end
 	end
-	local start = tonumber(args[1]) or 1
-	local konec = tonumber(args[2]) or #t
-	local prah = 10000 
-  if args.preskacka then 
-		local br = t[start].num
-		local last = br
-		local rada = 0
-		for i = start, konec do
-			local v = t[i]
-			local num = v.num
-			if last < num or math.abs(last - num) > prah  then
-				table.insert(ch,chyba_insert(v))
-			end
-			last = num
-		end
-	else
-		local last = t[start].num
-		for i=start,konec do 
-			local v = t[i]
-			local num = v.num
-			if num < last or math.abs(last - num) > prah then
-				table.insert(ch,chyba_insert(v))
-			end
-			last = num
-		end
-	end
+  local koje = {}
+  for _, zaz in ipairs(t) do 
+    local curr_koj = zaz.koje or ""
+    local curr = koje[curr_koj] or {}
+    table.insert(curr, zaz)
+    koje[curr_koj] = curr
+  end
+	-- local start = tonumber(args[1]) or 1
+	-- local konec = tonumber(args[2]) or #t
+	-- local prah = 10000 
+  -- if args.preskacka then 
+	-- 	local br = t[start].num
+	-- 	local last = br
+	-- 	local rada = 0
+	-- 	for i = start, konec do
+	-- 		local v = t[i]
+	-- 		local num = v.num
+	-- 		if last < num or math.abs(last - num) > prah  then
+	-- 			table.insert(ch,chyba_insert(v))
+	-- 		end
+	-- 		last = num
+	-- 	end
+	-- else
+	-- 	local last = t[start].num
+	-- 	for i=start,konec do 
+	-- 		local v = t[i]
+	-- 		local num = v.num
+	-- 		if num < last or math.abs(last - num) > prah then
+	-- 			table.insert(ch,chyba_insert(v))
+	-- 		end
+	-- 		last = num
+	-- 	end
+	-- end
+  -- number of steps in trying to find orientation
+  local max_count = 5
+  for k, records in pairs(koje) do
+    local start = records[1].num
+    local stop = records[#records].num
+    local xxx = ""
+    if start > stop then xxx =  "!!!!!!!!!!" end
+    print(k, start, stop, xxx)
+
+  end
+      
 	tablePrint(ch,{"Zpráva","Pozice","ČK","Signatura","Název"})
 elseif args.command == "sig2" then
     local lower =  unicode.utf8.lower
