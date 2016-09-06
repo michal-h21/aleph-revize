@@ -340,7 +340,7 @@ elseif args.command == "signatury" then
         print("wtf", pref, sig)
 		    table.insert(chyby,{"Chybná signatura",pos,sig,pref,num,dil,pis})
 			else
-				table.insert(t,{num = num, pos = pos, code = v.code, koje = v.koje})
+				table.insert(t,{num = tonumber(num), pos = pos, code = v.code, koje = v.koje, signatura = sig})
 		  end
 		else
 			table.insert(chyby,{"Nemohu najít záznam ke kódu: ",pos,v.code})
@@ -393,17 +393,75 @@ elseif args.command == "signatury" then
 	-- 	end
 	-- end
   -- number of steps in trying to find orientation
+  function reverse(tbl)
+    for i=1, math.floor(#tbl / 2) do
+      tbl[i], tbl[#tbl - i + 1] = tbl[#tbl - i + 1], tbl[i]
+    end
+    return tbl
+  end
   local max_count = 5
   for k, records in pairs(koje) do
     local start = records[1].num
     local stop = records[#records].num
-    local xxx = ""
-    if start > stop then xxx =  "!!!!!!!!!!" end
-    print(k, start, stop, xxx)
+    -- preradit koje nacitane odzadu
+    if start > stop then 
+      records = reverse(records)
+    end
+    local i = 2
+    local n = (records[i] and records[i].num) or 0
+    -- najit skutecny start, pokud nekdo nacita spatne serazenou hromadku
+    while start >= n and i < #records do
+      start = n
+      i = i + 1
+      n = records[i].num
+    end
+    local realstart = math.min(start, stop)
+    local realstop  = math.max(start, stop)
+    local len = realstop - realstart
+    local curr_err = {}
+    for i, curr_rec in ipairs(records) do
+      local num = curr_rec.num
+      if num < realstart or num > realstop then
+        -- resit jenom signatury, ktere jsou
+        local diff = math.abs(realstart - num)
+        if diff > #records then
+          local nexts = records[i+1] and records[i+1].signatura
+          local prevs = records[i-1] and records[i-1].signatura
+          curr_rec.nexts = nexts
+          curr_rec.prevs = prevs
+          table.insert(curr_err, curr_rec)
+          -- print(k, curr_rec.pos, curr_rec.signatura,realstart, realstop, len,  diff)
+          -- print(k, curr_rec.pos, curr_rec.signatura)
+        end
+      end
+    end
+    -- pročistit chyby od načítaných ve špattném pořadí
+    --
+    for i, rec in ipairs(curr_err) do
+      local num = rec.num
+      local nextrec = curr_err[i + 1] or {}
+      -- pokud jsme na konci pole, připočteme edostatečně velké číslo, aby nedošlo k falešné detekci
+      local nextnum = nextrec.num or num + 1000
+      -- konstanta 10 je svévolná, většinou čísla navazují po sobě
+      if math.abs(num - nextnum) < 10 then 
+        rec.delete = true
+        nextrec.delete = true
+        -- rec[i + 1].delete = true
+      end
+    end
+    for _, curr_rec in ipairs(curr_err) do
+      if curr_rec.delete ~= true then
+        print(k, curr_rec.pos, curr_rec.signatura, curr_rec.prevs, curr_rec.nexts)
+      end
+    end
+
+    -- local xxx = ""
+    -- if start > stop then xxx =  "!!!!!!!!!!" end
+    -- print(k, start, stop, xxx)
 
   end
       
-	tablePrint(ch,{"Zpráva","Pozice","ČK","Signatura","Název"})
+	-- tablePrint(ch,{"Zpráva","Pozice","ČK","Signatura","Název"})
 elseif args.command == "sig2" then
     local lower =  unicode.utf8.lower
     local gsub = unicode.utf8.gsub
