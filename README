@@ -26,6 +26,56 @@ Soubory s čárovými kódy:
 7. Provede se revize v Alephu, není třeba dávat tisk, budeme používat 
    výsledné xml
 
+Nastavení revize v Alephu
+-------------------------
+
+
+1) Vytvořil jsem si soubor revize.xml
+    Struktura:
+      <revize>
+      2592141928
+      </revize>
+2) Tento soubor překopíruju do adresáře:
+    C:\AL500\Revize\
+3) V Alephu vybreru z nabídky:
+    Služby > Revize > (ret-adm-01a) - Obecný formulář - revize do 10 000 jednotek
+    Výstupní soubor: pedf_revize_studovna
+    Dílčí knihovna: PEDFR
+    Sbírka: KRST8
+    (Signatura: F)
+    Formát zprávy: "Revize dokumentů - tisk všech záznamů"
+    Řadit podle "Signatury"
+
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+Aleph (kódy)
+============
+Dílčí knihovna:
+	PEDFR (Rettigova)
+	PEDFM (KVP)
+	PEDFC (Celetná)
+Sbírka:
+	KRK6 (Rett-knihovna)
+	KRST8 (Rett-studovna)
+	KRD5 (Rett-depozitář)
+	KRD6 (Rett-depozitář 1)
+	KRS7 (Rett-sklad)
+	KRA4 (Rett-archiv)
+	KMK2 (Knihovna-CES)
+	KMK3 (Knihovna-KVP)
+	KMK4 (Knihovna CŠM)
+	KVPD (Knihovna CDS)
+	KCS1 (Celetná-studovna AJL)
+Status jednotky:
+	01 (Prezenčně)
+	02 (Nelze půjčit)
+	03 (Grantová výp.)
+	04 (Běžná v.I)
+	05 (Běžná v.II)
+	06 (Běžná v.III)
+	07 (Krátkodobá výp.)
+	09 (Specifická výp.)
+
 XML soubor
 ----------
 
