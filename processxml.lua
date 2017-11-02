@@ -32,6 +32,11 @@ end
 
 local filename = dir .. config.xml
 local f = io.open(filename,"r")
+if not f then
+  print("Cannot open xml file ".. filename)
+  os.exit()
+end
+
 local i = 0
 local sec1 = 0
 local codes = rev_parse(dir .. config.kody)
