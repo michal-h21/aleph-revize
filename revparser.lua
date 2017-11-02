@@ -511,7 +511,7 @@ elseif args.command == "sig2" then
       end
     end
   end
-  tablePrint(ch, {"Čk","Signatura", "Název", "2 signatura","Načteno"})
+  tablePrint(ch, {"Čk","Signatura", "Načteno", "2 signatura","Název"})
 
 else
   print("Neznámý příkaz: ".. args.command)
